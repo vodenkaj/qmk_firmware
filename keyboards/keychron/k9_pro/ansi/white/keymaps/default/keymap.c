@@ -33,6 +33,30 @@ enum layers{
     QWERTY,
     DVORAK_PROGRAMMER,
     WIN_FN,
+    SPECIAL,
+};
+
+enum {
+    TD_E_DIA = 0
+};
+
+// Tap Dance Actions
+void tap_dance_implementation(tap_dance_state_t *state, void *user_data) {
+        switch (state->count) {
+        case 1:  // Single tap: é
+            SEND_STRING("é");  // Sends Unicode for 'é'
+            break;
+        case 2:  // Double tap: ě
+            SEND_STRING("ě");  // Sends Unicode for 'ě'
+            break;
+        default:
+            break;
+    }
+}
+
+// Define Tap Dance Actions
+tap_dance_action_t tap_dance_actions[] = {
+    [TD_E_DIA] = ACTION_TAP_DANCE_FN(tap_dance_implementation), // Using custom function
 };
 
 const custom_shift_key_t custom_shift_keys[] = {
@@ -68,7 +92,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_TAB,    KC_SCLN,  KC_COMM,  KC_DOT,   KC_P,     KC_Y,     KC_F,    KC_G,     KC_C,     KC_R,     KC_L,     KC_SLSH,  KC_AT,    KC_BSLS,
       KC_BSPC,   KC_A,     KC_O,     KC_E,     KC_U,     KC_I,     KC_D,    KC_H,     KC_T,     KC_N,     KC_S,     KC_MINS,            KC_ENT,
       KC_LSFT,   KC_QUOT,  KC_Q,     KC_J,     KC_K,     KC_X,     KC_B,    KC_M,     KC_W,     KC_V,     KC_Z,                       KC_UP,
-      KC_LCTL,   KC_LWIN,  KC_RALT,                              KC_SPC,                                MO(WIN_FN),   KC_LEFT,  KC_DOWN,  KC_RIGHT),
+      KC_LCTL,   KC_LWIN,  TG(SPECIAL),                              KC_SPC,                                MO(WIN_FN),   KC_LEFT,  KC_DOWN,  KC_RIGHT),
+
+    [SPECIAL] = LAYOUT_61_ansi(
+      KC_DOLLAR, KC_AMPR,  KC_LBRC,  KC_LCBR,  KC_RCBR,  KC_LPRN,  KC_EQL,  KC_ASTR,  KC_RPRN,  KC_PLUS,  KC_RBRC,  KC_EXLM,  KC_HASH,  KC_ESC,
+      KC_TAB,    KC_SCLN,  KC_COMM,  KC_DOT,   KC_P,     KC_Y,     KC_F,    KC_G,     KC_C,     KC_R,     KC_L,     KC_SLSH,  KC_AT,    KC_BSLS,
+      KC_BSPC,   KC_A,     KC_O,     TD(TD_E_DIA),     KC_U,     KC_I,     KC_D,    KC_H,     KC_T,     KC_N,     KC_S,     KC_MINS,            KC_ENT,
+      KC_LSFT,   KC_QUOT,  KC_Q,     KC_J,     KC_K,     KC_X,     KC_B,    KC_M,     KC_W,     KC_V,     KC_Z,                       KC_UP,
+      KC_LCTL,   KC_LWIN,  _______,                              KC_SPC,                                MO(WIN_FN),   KC_LEFT,  KC_DOWN,  KC_RIGHT),
 
     [WIN_FN] = LAYOUT_61_ansi(
         KC_GRV,   KC_BRID,  KC_BRIU,  KC_TASK,  KC_FILE,  BL_DOWN,  BL_UP,    KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,
