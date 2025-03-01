@@ -17,6 +17,9 @@
 #include "features/custom_shift_keys.h"
 #include QMK_KEYBOARD_H
 
+#include "keymap_dvorak_programmer.h"
+#include "keymap_czech.h"
+
 // Mouse key speed and acceleration.
 #undef MOUSEKEY_DELAY
 #define MOUSEKEY_DELAY          0
@@ -31,9 +34,10 @@
 
 enum layers{
     QWERTY,
-    DVORAK_PROGRAMMER,
-    WIN_FN,
-    SPECIAL,
+    DVP,
+    DVP_GB,
+    FN,
+    CZ,
 };
 
 enum {
@@ -60,20 +64,27 @@ tap_dance_action_t tap_dance_actions[] = {
 };
 
 const custom_shift_key_t custom_shift_keys[] = {
-  {KC_DOLLAR, KC_TILDE},
-  {KC_AMPERSAND, KC_1},
-  {KC_LEFT_BRACKET, KC_2},
-  {KC_LEFT_CURLY_BRACE, KC_3 },
-  {KC_RIGHT_CURLY_BRACE, KC_4},
-  {KC_LEFT_PAREN, KC_5},
-  {KC_EQUAL, KC_6},
-  {KC_ASTR, KC_7},
-  {KC_RIGHT_PAREN, KC_8},
-  {KC_PLUS, KC_9},
-  {KC_RIGHT_BRACKET, KC_0},
-  {KC_EXLM, KC_PERC},
-  {KC_HASH, KC_GRV},
-  {KC_AT, KC_CIRC},
+  {DP_DLR, DP_TILD},
+  {DP_AMPR, DP_1},
+  {DP_LBRC, DP_2},
+  {DP_LCBR, DP_3},
+  {DP_RCBR, DP_4},
+  {DP_LPRN, DP_5},
+  {DP_EQL, DP_6},
+  {DP_ASTR, DP_7},
+  {DP_RPRN, DP_8},
+  {DP_PLUS, DP_9},
+  {DP_RBRC, DP_0},
+  {DP_EXLM, DP_PERC},
+  {DP_HASH, DP_GRV},
+  {DP_SCLN, DP_COLN},
+  {DP_COMM, DP_LABK},
+  {DP_DOT, DP_RABK},
+  {DP_SLSH, DP_QUES},
+  {DP_AT, DP_CIRC},
+  {DP_BSLS, DP_PIPE},
+  {DP_MINS, DP_UNDS},
+  {DP_QUOT, DP_DQUO},
 };
 uint8_t NUM_CUSTOM_SHIFT_KEYS =
     sizeof(custom_shift_keys) / sizeof(custom_shift_key_t);
@@ -84,59 +95,72 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,
         KC_TAB,   KC_Q,     KC_W,     KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,
         KC_CAPS,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,
-        KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT,
-        KC_LCTL,  KC_LWIN,  KC_LALT,                                KC_SPC,                                 KC_RALT, MO(WIN_FN),MO(WIN_FN),KC_RCTL),
+        KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            KC_UP,
+        KC_LCTL,  KC_LWIN,  KC_LALT,                                KC_SPC,                                 MO(FN),  KC_LEFT,  KC_DOWN,  KC_RIGHT),
 
-    [DVORAK_PROGRAMMER] = LAYOUT_61_ansi(
+    [DVP] = LAYOUT_61_ansi(
+      DP_DLR,    DP_AMPR,  DP_LBRC,  DP_LCBR,  DP_RCBR,  DP_LPRN,  DP_EQL,  DP_ASTR,  DP_RPRN,  DP_PLUS,  DP_RBRC,  DP_EXLM,  DP_HASH,  KC_ESC,
+      KC_TAB,    DP_SCLN,  DP_COMM,  DP_DOT,   DP_P,     DP_Y,     DP_F,    DP_G,     DP_C,     DP_R,     DP_L,     DP_SLSH,  DP_AT,    DP_BSLS,
+      KC_BSPC,   DP_A,     DP_O,     DP_E,     DP_U,     DP_I,     DP_D,    DP_H,     DP_T,     DP_N,     DP_S,     DP_MINS,            KC_ENT,
+      KC_LSFT,   DP_QUOT,  DP_Q,     DP_J,     DP_K,     DP_X,     DP_B,    DP_M,     DP_W,     DP_V,     DP_Z,                       KC_UP,
+      KC_LCTL,   KC_LWIN,  OSL(CZ),                              KC_SPC,                                MO(FN),   KC_LEFT,  KC_DOWN,  KC_RIGHT),
+
+    [DVP_GB] = LAYOUT_61_ansi(
       KC_DOLLAR, KC_AMPR,  KC_LBRC,  KC_LCBR,  KC_RCBR,  KC_LPRN,  KC_EQL,  KC_ASTR,  KC_RPRN,  KC_PLUS,  KC_RBRC,  KC_EXLM,  KC_HASH,  KC_ESC,
       KC_TAB,    KC_SCLN,  KC_COMM,  KC_DOT,   KC_P,     KC_Y,     KC_F,    KC_G,     KC_C,     KC_R,     KC_L,     KC_SLSH,  KC_AT,    KC_BSLS,
       KC_BSPC,   KC_A,     KC_O,     KC_E,     KC_U,     KC_I,     KC_D,    KC_H,     KC_T,     KC_N,     KC_S,     KC_MINS,            KC_ENT,
       KC_LSFT,   KC_QUOT,  KC_Q,     KC_J,     KC_K,     KC_X,     KC_B,    KC_M,     KC_W,     KC_V,     KC_Z,                       KC_UP,
-      KC_LCTL,   KC_LWIN,  TG(SPECIAL),                              KC_SPC,                                MO(WIN_FN),   KC_LEFT,  KC_DOWN,  KC_RIGHT),
+      KC_LCTL,   KC_LWIN,  OSL(CZ),                              KC_SPC,                                MO(FN),   KC_LEFT,  KC_DOWN,  KC_RIGHT),
 
-    [SPECIAL] = LAYOUT_61_ansi(
-      KC_DOLLAR, KC_AMPR,  KC_LBRC,  KC_LCBR,  KC_RCBR,  KC_LPRN,  KC_EQL,  KC_ASTR,  KC_RPRN,  KC_PLUS,  KC_RBRC,  KC_EXLM,  KC_HASH,  KC_ESC,
-      KC_TAB,    KC_SCLN,  KC_COMM,  KC_DOT,   KC_P,     KC_Y,     KC_F,    KC_G,     KC_C,     KC_R,     KC_L,     KC_SLSH,  KC_AT,    KC_BSLS,
-      KC_BSPC,   KC_A,     KC_O,     TD(TD_E_DIA),     KC_U,     KC_I,     KC_D,    KC_H,     KC_T,     KC_N,     KC_S,     KC_MINS,            KC_ENT,
-      KC_LSFT,   KC_QUOT,  KC_Q,     KC_J,     KC_K,     KC_X,     KC_B,    KC_M,     KC_W,     KC_V,     KC_Z,                       KC_UP,
-      KC_LCTL,   KC_LWIN,  _______,                              KC_SPC,                                MO(WIN_FN),   KC_LEFT,  KC_DOWN,  KC_RIGHT),
+    [CZ] = LAYOUT_61_ansi(
+      DP_DLR,    DP_AMPR,  DP_LBRC,  DP_LCBR,  DP_RCBR,  DP_LPRN,  DP_EQL,  DP_ASTR,  DP_RPRN,  DP_PLUS,  DP_RBRC,  DP_EXLM,  DP_HASH,  KC_ESC,
+      KC_TAB,    DP_SCLN,  DP_COMM,  DP_DOT,   DP_P,     DP_Y,     DP_F,    DP_G,     KC_F1,     DP_R,     DP_L,     DP_SLSH,  DP_AT,    DP_BSLS,
+      KC_BSPC,   KC_F2,     DP_O,     DP_E,     DP_U,     DP_I,     DP_D,    DP_H,     DP_T,     DP_N,     DP_S,     DP_MINS,            KC_ENT,
+      KC_LSFT,   DP_QUOT,  DP_Q,     DP_J,     DP_K,     DP_X,     DP_B,    DP_M,     DP_W,     DP_V,     DP_Z,                       KC_UP,
+      KC_LCTL,   KC_LWIN,  KC_RALT,                              KC_SPC,                                MO(FN),   KC_LEFT,  KC_DOWN,  KC_RIGHT),
 
-    [WIN_FN] = LAYOUT_61_ansi(
-        KC_GRV,   KC_BRID,  KC_BRIU,  KC_TASK,  KC_FILE,  BL_DOWN,  BL_UP,    KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,
+    [FN] = LAYOUT_61_ansi(
+        QK_BOOTLOADER,  DF(DVP),  DF(DVP_GB),  DF(QWERTY),  KC_FILE,  BL_DOWN,  BL_UP,    KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,
         _______,  BT_HST1,  BT_HST2,  BT_HST3,  _______,  _______,  _______,  _______,  KC_APP,   KC_SCRL,  KC_INS,   KC_PGUP,  KC_HOME,  _______,
         BL_TOGG,  BL_STEP,  BL_UP,    _______,  _______,  _______,  _______,  _______,  KC_UP,    KC_PSCR,  KC_PGDN,  KC_END,             _______,
         _______,            _______,  BL_DOWN,  _______,  _______,  _______,  NK_TOGG,  KC_LEFT,  KC_DOWN,  KC_RIGHT, KC_DEL,             _______,
         _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______),
 };
 
-const custom_shift_key_t custom_meta_keys[] = {
-  {KC_AMPERSAND, KC_1},
-  {KC_LEFT_BRACKET, KC_2},
-  {KC_LEFT_CURLY_BRACE, KC_3 },
-  {KC_RIGHT_CURLY_BRACE, KC_4},
-  {KC_LEFT_PAREN, KC_5},
-  {KC_EQUAL, KC_6},
-  {KC_ASTR, KC_7},
-  {KC_RIGHT_PAREN, KC_8},
-  {KC_PLUS, KC_9},
-  {KC_RIGHT_BRACKET, KC_0},
-};
-uint8_t NUM_CUSTOM_META_KEYS =
-    sizeof(custom_meta_keys) / sizeof(custom_shift_key_t);
+void send_czech_letter(uint16_t keycode, char* accent) {
+    const uint8_t mods = get_mods();
+    const uint8_t one_shot_mods = get_oneshot_mods();
+    //bool caps_on = is_caps_word_on();
+    clear_mods();
+    clear_oneshot_mods();
 
-bool process_meta_combination(uint16_t keycode, keyrecord_t *record) {
-    if (record->event.pressed) {
-        if (get_mods() == MOD_BIT(KC_LWIN)) {
-            for (int i = 0; i < NUM_CUSTOM_META_KEYS; ++i) {
-                if (keycode == custom_meta_keys[i].keycode) {
-                    tap_code16(custom_meta_keys[i].shifted_keycode);
-                    return false;
-                }
-            }
-        }
-    }
+    bool shift_active = (( mods | one_shot_mods ) & MOD_MASK_SHIFT);
 
-    return true;
+    bool should_shift = shift_active;
+
+    SEND_STRING(SS_DOWN(X_RALT));
+    send_string(accent);
+    SEND_STRING(SS_UP(X_RALT));
+
+    SEND_STRING(SS_DELAY(50));
+
+    char* modifier_down = should_shift ? SS_DOWN(X_LSFT) : "";
+    char* modifier_up = should_shift ? SS_UP(X_LSFT) : "";
+
+    char* key_to_send = malloc(sizeof(modifier_down) + sizeof(modifier_up) + sizeof(keycode));
+
+    char num_str[10];
+    snprintf(num_str, sizeof(num_str), "%u", keycode);
+
+    strcpy(key_to_send, modifier_down);
+    strcat(key_to_send, num_str);
+    strcat(key_to_send, modifier_up);
+
+    send_string(key_to_send);
+
+    free(key_to_send);
+
+    set_mods(mods);
 }
 
 typedef struct {
@@ -156,6 +180,32 @@ const custom_key_t custom_ralt_keys[] = {
 uint8_t NUM_custom_ralt_keys =
     sizeof(custom_ralt_keys) / sizeof(custom_key_t);
 
+bool process_czech_keyboard(uint16_t keycode, keyrecord_t *record) {
+  static uint16_t registered_keycode = KC_NO;
+
+  if (registered_keycode != KC_NO) {
+    unregister_code16(registered_keycode);
+    registered_keycode = KC_NO;
+  }
+
+
+ if (record->event.pressed) {
+    switch (keycode) {
+        case KC_F1:
+            // C
+          send_czech_letter(DP_C, "c");
+          return false;
+
+        case KC_F2:
+          // A
+          //send_czech_letter("a", "'");
+          return false;
+    }
+ }
+
+ return true;
+}
+
 bool process_ralt_combination(uint16_t keycode, keyrecord_t *record) {
   static uint16_t registered_keycode = KC_NO;
 
@@ -172,6 +222,7 @@ bool process_ralt_combination(uint16_t keycode, keyrecord_t *record) {
             bool shift_pressed = mods & MOD_BIT(KC_LSFT);
 
             for (int i = 0; i < NUM_custom_ralt_keys; ++i) {
+
                 if (keycode == custom_ralt_keys[i].keycode) {
                     registered_keycode = custom_ralt_keys[i].alter_keycode;
 
@@ -192,8 +243,8 @@ bool process_ralt_combination(uint16_t keycode, keyrecord_t *record) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (!process_custom_shift_keys(keycode, record)) { return false; }
-  if (!process_meta_combination(keycode, record)) { return false; }
-  if (!process_ralt_combination(keycode, record)) { return false; }
+  //if (!process_ralt_combination(keycode, record)) { return false; }
+  //if (!process_czech_keyboard(keycode, record)) { return false; }
   return true;
 }
 
