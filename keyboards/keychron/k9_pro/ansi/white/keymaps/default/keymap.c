@@ -18,7 +18,6 @@
 #include QMK_KEYBOARD_H
 
 #include "keymap_dvorak_programmer.h"
-#include "keymap_czech.h"
 
 // Mouse key speed and acceleration.
 #undef MOUSEKEY_DELAY
@@ -31,6 +30,24 @@
 #define MOUSEKEY_MAX_SPEED      6
 #undef MOUSEKEY_TIME_TO_MAX
 #define MOUSEKEY_TIME_TO_MAX    64
+
+
+enum custom_keycodes {
+  CAPS_CUSTOM = SAFE_RANGE,
+  CZ_C,
+  CZ_R,
+  CZ_S,
+  CZ_Z,
+  CZ_A,
+  CZ_Y,
+  CZ_I,
+  CZ_U,
+  CZ_E,
+  CZ_O,
+  CZ_D,
+  CZ_T,
+  CZ_N,
+};
 
 enum layers{
     QWERTY,
@@ -114,9 +131,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [CZ] = LAYOUT_61_ansi(
       DP_DLR,    DP_AMPR,  DP_LBRC,  DP_LCBR,  DP_RCBR,  DP_LPRN,  DP_EQL,  DP_ASTR,  DP_RPRN,  DP_PLUS,  DP_RBRC,  DP_EXLM,  DP_HASH,  KC_ESC,
-      KC_TAB,    DP_SCLN,  DP_COMM,  DP_DOT,   DP_P,     DP_Y,     DP_F,    DP_G,     KC_F1,     DP_R,     DP_L,     DP_SLSH,  DP_AT,    DP_BSLS,
-      KC_BSPC,   KC_F2,     DP_O,     DP_E,     DP_U,     DP_I,     DP_D,    DP_H,     DP_T,     DP_N,     DP_S,     DP_MINS,            KC_ENT,
-      KC_LSFT,   DP_QUOT,  DP_Q,     DP_J,     DP_K,     DP_X,     DP_B,    DP_M,     DP_W,     DP_V,     DP_Z,                       KC_UP,
+      KC_TAB,    DP_SCLN,  DP_COMM,  DP_DOT,   DP_P,     CZ_Y,     DP_F,    DP_G,     CZ_C,     CZ_R,     DP_L,     DP_SLSH,  DP_AT,    DP_BSLS,
+      KC_BSPC,   CZ_A,     CZ_O,     CZ_E,     CZ_U,     CZ_I,     CZ_D,    DP_H,     CZ_T,     CZ_N,     CZ_S,     DP_MINS,            KC_ENT,
+      KC_LSFT,   DP_QUOT,  DP_Q,     DP_J,     DP_K,     DP_X,     DP_B,    DP_M,     DP_W,     DP_V,     CZ_Z,                       KC_UP,
       KC_LCTL,   KC_LWIN,  KC_RALT,                              KC_SPC,                                MO(FN),   KC_LEFT,  KC_DOWN,  KC_RIGHT),
 
     [FN] = LAYOUT_61_ansi(
@@ -127,10 +144,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______),
 };
 
-void send_czech_letter(uint16_t keycode, char* accent) {
+void send_czech_letter(char* key, char* accent) {
     const uint8_t mods = get_mods();
     const uint8_t one_shot_mods = get_oneshot_mods();
-    //bool caps_on = is_caps_word_on();
     clear_mods();
     clear_oneshot_mods();
 
@@ -147,13 +163,10 @@ void send_czech_letter(uint16_t keycode, char* accent) {
     char* modifier_down = should_shift ? SS_DOWN(X_LSFT) : "";
     char* modifier_up = should_shift ? SS_UP(X_LSFT) : "";
 
-    char* key_to_send = malloc(sizeof(modifier_down) + sizeof(modifier_up) + sizeof(keycode));
-
-    char num_str[10];
-    snprintf(num_str, sizeof(num_str), "%u", keycode);
+    char* key_to_send = malloc(sizeof(modifier_down) + sizeof(modifier_up) + sizeof(key));
 
     strcpy(key_to_send, modifier_down);
-    strcat(key_to_send, num_str);
+    strcat(key_to_send, key);
     strcat(key_to_send, modifier_up);
 
     send_string(key_to_send);
@@ -190,15 +203,68 @@ bool process_czech_keyboard(uint16_t keycode, keyrecord_t *record) {
 
 
  if (record->event.pressed) {
+    const uint8_t mods = get_mods();
+    bool ctrl_active = (mods & MOD_BIT(KC_LCTL)) != 0;
+
     switch (keycode) {
-        case KC_F1:
-            // C
-          send_czech_letter(DP_C, "c");
+        case CZ_C:
+          send_czech_letter("i", "i");
           return false;
 
-        case KC_F2:
-          // A
-          //send_czech_letter("a", "'");
+        case CZ_R:
+          send_czech_letter("o", "i");
+          return false;
+
+        case CZ_S:
+          send_czech_letter(";", "i");
+          return false;
+
+        case CZ_Z:
+          send_czech_letter("/", "i");
+          return false;
+
+        case CZ_A:
+          send_czech_letter("a", "z");
+          return false;
+
+        case CZ_Y:
+          send_czech_letter("t", "z");
+          return false;
+
+        case CZ_I:
+          send_czech_letter("g", "z");
+          return false;
+
+        case CZ_U:
+          if (ctrl_active) {
+          send_czech_letter("f", "z");
+          } else {
+          send_czech_letter("f", "s");
+          }
+          return false;
+
+        case CZ_E:
+          if (ctrl_active) {
+              send_czech_letter("d", "i");
+          } else {
+              send_czech_letter("d", "z");
+          }
+          return false;
+
+        case CZ_O:
+          send_czech_letter("s", "z");
+          return false;
+
+        case CZ_D:
+          send_czech_letter("h", "i");
+          return false;
+
+        case CZ_T:
+          send_czech_letter("k", "i");
+          return false;
+
+        case CZ_N:
+          send_czech_letter("l", "i");
           return false;
     }
  }
@@ -244,7 +310,7 @@ bool process_ralt_combination(uint16_t keycode, keyrecord_t *record) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (!process_custom_shift_keys(keycode, record)) { return false; }
   //if (!process_ralt_combination(keycode, record)) { return false; }
-  //if (!process_czech_keyboard(keycode, record)) { return false; }
+  if (!process_czech_keyboard(keycode, record)) { return false; }
   return true;
 }
 
